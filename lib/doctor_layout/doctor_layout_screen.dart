@@ -3,6 +3,7 @@ import 'package:health_care_app/doctor_layout/home_screen/home_screen.dart';
 import 'package:health_care_app/doctor_layout/notification_screen/notification_screen.dart';
 import 'package:health_care_app/doctor_layout/setting_screen/setting_screen.dart';
 import 'package:health_care_app/core/constants/app_colors/app_colors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DoctorLayoutScreen extends StatefulWidget {
   static const routeName = 'doctorlayout';
@@ -39,7 +40,7 @@ class _DoctorLayoutScreenState extends State<DoctorLayoutScreen> {
               currentIndex: selectedIndex,
               items: [
                 BottomNavigationBarItem(
-                  label: 'Home',
+                  label: AppLocalizations.of(context)!.home,
                   icon: Icon(
                     Icons.home_outlined,
                     color: selectedIndex == 0
@@ -48,7 +49,7 @@ class _DoctorLayoutScreenState extends State<DoctorLayoutScreen> {
                   ),
                 ),
                 BottomNavigationBarItem(
-                  label: 'Notification',
+                  label: AppLocalizations.of(context)!.notification,
                   icon: Icon(
                     Icons.notifications_none,
                     color: selectedIndex == 1
@@ -57,7 +58,7 @@ class _DoctorLayoutScreenState extends State<DoctorLayoutScreen> {
                   ),
                 ),
                 BottomNavigationBarItem(
-                  label: 'Setting',
+                  label: AppLocalizations.of(context)!.setting,
                   icon: Icon(
                     Icons.settings,
                     color: selectedIndex == 2
