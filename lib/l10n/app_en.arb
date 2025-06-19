@@ -1,9 +1,20 @@
 {
     "welcome":"Welcome Doctor",
     "haveANiceDay":"Have A Nice Day",
-    "search":"Search By Date (e.r. 13 Aug)",
+    "search":"Search By Date (e.g. 13 Aug)",
     "upcomingAppointments":"Upcoming Appointments",
     "home":"Home",
     "notification":"Notification",
-    "setting":"Setting"
+    "setting":"Setting",
+    "wallet":"My Wallet",
+    "security":"Security",
+    "changePassword":"Change Password",
+    "forgotPassword":"Forgot Password",
+    "general":"General",
+    "receiveNotifications":"Receive Notification",
+    "vibration":"Vibration",
+    "language":"Language",
+    "helpSupport":"Help and Support",
+    "save":"Save",
+    "cancel":"Cancel"
 }

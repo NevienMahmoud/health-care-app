@@ -5,5 +5,16 @@
     "upcomingAppointments":"المواعيد القادمة",
     "home":"الرئيسية",
     "notification":"الإشعارات",
-    "setting":"الإعدادات"
+    "setting":"الإعدادات",
+    "wallet":"المحفظة",
+    "security":"الأمان",
+    "changePassword":"تغيير كلمة المرور",
+    "forgotPassword":"نسييت كلمة المرور",
+    "general":"عام",
+    "receiveNotifications":"استلام الإشعارات",
+    "vibration":"الإهتزاز",
+    "language":"اللغة",
+    "helpSupport":"المساعدة والدعم",
+    "save":"حفظ",
+    "cancel":"إلغاء"
 }

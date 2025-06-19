@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:health_care_app/auth/pressentation/screens/auht_screen/forgot_pass_screen.dart';
 import 'package:health_care_app/core/constants/app_colors/app_colors.dart';
-import 'package:health_care_app/doctor_layout/setting_screen/wallet_screen.dart';
 import 'package:health_care_app/doctor_layout/setting_screen/change_password_screen.dart';
+import 'package:health_care_app/doctor_layout/setting_screen/wallet_screen.dart';
+import 'package:health_care_app/providers/setting_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -20,31 +22,24 @@ class _SettingScreenState extends State<SettingScreen> {
   bool receiveNotifications = true;
   bool vibration = true;
 
-  String selectedLanguage = 'English';
-
   @override
   void initState() {
     super.initState();
-    _loadSettings();
+    _loadNotificationSettings();
   }
 
-  Future<void> _loadSettings() async {
+  Future<void> _loadNotificationSettings() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       receiveNotifications = prefs.getBool('receive_notifications') ?? true;
       vibration = prefs.getBool('vibration') ?? true;
-      selectedLanguage = prefs.getString('selected_language') ?? 'English';
       isLoading = false;
     });
   }
 
-  Future<void> _saveSetting(String key, dynamic value) async {
+  Future<void> _saveSetting(String key, bool value) async {
     final prefs = await SharedPreferences.getInstance();
-    if (value is bool) {
-      await prefs.setBool(key, value);
-    } else if (value is String) {
-      await prefs.setString(key, value);
-    }
+    await prefs.setBool(key, value);
   }
 
   void _showNotificationDialog(BuildContext context) {
@@ -55,26 +50,27 @@ class _SettingScreenState extends State<SettingScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text(
-            "Notification Settings",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-          ),
+          title: Text(AppLocalizations.of(context)!.notification),
           content: StatefulBuilder(
-            builder: (context, setDialogState) {
+            builder: (context, setStateDialog) {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SwitchListTile(
-                    title: const Text("Receive Notifications"),
-                    activeColor: AppColors.primaryColor,
+                    title: Text(AppLocalizations.of(context)!.receiveNotifications),
                     value: tempReceive,
-                    onChanged: (val) => setDialogState(() => tempReceive = val),
+                    activeColor: AppColors.primaryColor,
+                    onChanged: (val) {
+                      setStateDialog(() => tempReceive = val);
+                    },
                   ),
                   SwitchListTile(
-                    title: const Text("Vibration"),
-                    activeColor: AppColors.primaryColor,
+                    title: Text(AppLocalizations.of(context)!.vibration),
                     value: tempVibration,
-                    onChanged: (val) => setDialogState(() => tempVibration = val),
+                    activeColor: AppColors.primaryColor,
+                    onChanged: (val) {
+                      setStateDialog(() => tempVibration = val);
+                    },
                   ),
                 ],
               );
@@ -82,10 +78,9 @@ class _SettingScreenState extends State<SettingScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("Cancel",style: TextStyle(color: Colors.black),),
+              onPressed: () => Navigator.pop(context),
+              child: Text(AppLocalizations.of(context)!.cancel,
+                  style: const TextStyle(color: Colors.black)),
             ),
             ElevatedButton(
               onPressed: () {
@@ -97,7 +92,8 @@ class _SettingScreenState extends State<SettingScreen> {
                 _saveSetting('vibration', tempVibration);
                 Navigator.pop(context);
               },
-              child: const Text("Save",style: TextStyle(color: AppColors.primaryColor),),
+              child: Text(AppLocalizations.of(context)!.save,
+                  style: const TextStyle(color: AppColors.primaryColor)),
             ),
           ],
         );
@@ -106,40 +102,34 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   void _showLanguageDialog(BuildContext context) {
+    final provider = Provider.of<SettingProvider>(context, listen: false);
+    String currentLang = provider.language;
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text(
-            "Select Language",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-          ),
+          title: Text(AppLocalizations.of(context)!.language),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
                 title: const Text("English"),
-                trailing: selectedLanguage == 'English'
+                trailing: currentLang == 'en'
                     ? const Icon(Icons.check, color: AppColors.primaryColor)
                     : null,
                 onTap: () {
-                  setState(() {
-                    selectedLanguage = 'English';
-                  });
-                  _saveSetting('selected_language', 'English');
+                  provider.changeLanguage('en');
                   Navigator.pop(context);
                 },
               ),
               ListTile(
                 title: const Text("العربية"),
-                trailing: selectedLanguage == 'العربية'
+                trailing: currentLang == 'ar'
                     ? const Icon(Icons.check, color: AppColors.primaryColor)
                     : null,
                 onTap: () {
-                  setState(() {
-                    selectedLanguage = 'العربية';
-                  });
-                  _saveSetting('selected_language', 'العربية');
+                  provider.changeLanguage('ar');
                   Navigator.pop(context);
                 },
               ),
@@ -152,20 +142,26 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<SettingProvider>(context);
+    final lang = provider.language;
+    final loc = AppLocalizations.of(context)!;
+
     return SafeArea(
         child: isLoading
             ? const Center(child: CircularProgressIndicator())
             : Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 Center(
-                  child: Text(AppLocalizations.of(context)!.setting,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 25,
-                          color: Colors.black)),
+                Center(
+                  child: Text(
+                    loc.setting,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25,
+                        color: Colors.black),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 const Row(
@@ -174,8 +170,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       backgroundColor: AppColors.primaryColor,
                       radius: 33,
                       child: CircleAvatar(
-                        backgroundImage:
-                        AssetImage('assets/images/apple.png'),
+                        backgroundImage: AssetImage('assets/images/apple.png'),
                         radius: 30,
                       ),
                     ),
@@ -213,33 +208,34 @@ class _SettingScreenState extends State<SettingScreen> {
                   onTap: () {
                     Navigator.of(context).pushNamed(WalletScreen.routeName);
                   },
-                  child: const Row(
+                  child: Row(
                     children: [
-                      Icon((Icons.wallet)),
-                      SizedBox(width: 10),
-                      Text('My Wallet',
-                          style:
-                          TextStyle(fontSize: 18, color: Colors.black)),
+                      const Icon(Icons.wallet),
+                      const SizedBox(width: 10),
+                      Text(loc.wallet,
+                          style: const TextStyle(
+                              fontSize: 18, color: Colors.black)),
                     ],
                   ),
                 ),
-                SizedBox(height: 10,),
-                const Divider(color: Colors.black, thickness: 1),
-                SizedBox(height: 10,),
-                const Text('Security',
-                    style: TextStyle(color: Colors.black, fontSize: 18)),
+                const SizedBox(height: 10),
+                const Divider(color: Colors.black),
+                const SizedBox(height: 10),
+                Text(loc.security,
+                    style: const TextStyle(
+                        fontSize: 18, color: Colors.black)),
                 const SizedBox(height: 10),
                 GestureDetector(
                   onTap: () {
                     Navigator.pushNamed(
                         context, ChangePasswordScreen.routeName);
                   },
-                  child: const Row(
+                  child: Row(
                     children: [
-                      Icon(Icons.lock, color: Colors.black),
-                      SizedBox(width: 10),
-                      Text('Change password',
-                          style: TextStyle(color: Colors.black))
+                      const Icon(Icons.lock),
+                      const SizedBox(width: 10),
+                      Text(loc.changePassword,
+                          style: const TextStyle(color: Colors.black))
                     ],
                   ),
                 ),
@@ -248,20 +244,21 @@ class _SettingScreenState extends State<SettingScreen> {
                   onTap: () {
                     Navigator.pushNamed(context, ForgotPassword.routeName);
                   },
-                  child: const Row(
+                  child: Row(
                     children: [
-                      Icon(Icons.lock_open, color: Colors.black),
-                      SizedBox(width: 10),
-                      Text('Forgot password',
-                          style: TextStyle(color: Colors.black))
+                      const Icon(Icons.lock_open),
+                      const SizedBox(width: 10),
+                      Text(loc.forgotPassword,
+                          style: const TextStyle(color: Colors.black))
                     ],
                   ),
                 ),
-                SizedBox(height: 10,),
-                const Divider(color: Colors.black, thickness: 1),
-                SizedBox(height: 10,),
-                const Text('General',
-                    style: TextStyle(color: Colors.black, fontSize: 18)),
+                const SizedBox(height: 10),
+                const Divider(color: Colors.black),
+                const SizedBox(height: 10),
+                Text(loc.general,
+                    style: const TextStyle(
+                        fontSize: 18, color: Colors.black)),
                 const SizedBox(height: 10),
                 GestureDetector(
                   onTap: () => _showNotificationDialog(context),
@@ -269,7 +266,8 @@ class _SettingScreenState extends State<SettingScreen> {
                     children: [
                       const Icon(Icons.notifications, color: Colors.black),
                       const SizedBox(width: 10),
-                       Text(AppLocalizations.of(context)!.notification, style: TextStyle(color: Colors.black)),
+                      Text(loc.notification,
+                          style: const TextStyle(color: Colors.black)),
                       const Spacer(),
                     ],
                   ),
@@ -281,20 +279,23 @@ class _SettingScreenState extends State<SettingScreen> {
                     children: [
                       const Icon(Icons.language, color: Colors.black),
                       const SizedBox(width: 10),
-                      const Text('Languages', style: TextStyle(color: Colors.black)),
+                      Text(loc.language,
+                          style: const TextStyle(color: Colors.black)),
                       const Spacer(),
-                      Text(selectedLanguage,
+                      Text(lang == 'en' ? 'English' : 'العربية',
                           style: const TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.bold)),
+                              color: AppColors.primaryColor,
+                              fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
                 const SizedBox(height: 10),
-                const Row(
+                Row(
                   children: [
-                    Icon(Icons.help, color: Colors.black),
-                    SizedBox(width: 10),
-                    Text('Help and Support', style: TextStyle(color: Colors.black)),
+                    const Icon(Icons.help, color: Colors.black),
+                    const SizedBox(width: 10),
+                    Text(loc.helpSupport,
+                        style: const TextStyle(color: Colors.black)),
                   ],
                 ),
               ],
