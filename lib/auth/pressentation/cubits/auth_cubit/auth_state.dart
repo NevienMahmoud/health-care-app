@@ -15,4 +15,4 @@ final class AuthError extends AuthStates {
   AuthError(this.message);
 }
 
-final class AuthLoading extends AuthStates {}
+final class AuthLoading extends AuthStates{}

@@ -13,14 +13,14 @@ class AuthCubit extends Cubit<AuthStates> {
   final AuthService _authService;
   Future<void> signup(
       {String? specialization,
-      required String email,
-      required String password,
-      required String firstName,
-      required String lastName,
-      required String confirmPassword,
-      required String phoneNumber,
-      required String address,
-      required String userType}) async {
+        required String email,
+        required String password,
+        required String firstName,
+        required String lastName,
+        required String confirmPassword,
+        required String phoneNumber,
+        required String address,
+        required String userType}) async {
     emit(AuthLoading());
     try {
       await _authService.signup(

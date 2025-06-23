@@ -20,21 +20,21 @@ class SignupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthCubit(AuthService()),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Sign up',
-            style: TextStyle(
-                color: AppColors.primaryColor,
-                fontSize: 25,
-                fontWeight: FontWeight.bold),
-          ),
-        ),
-        body: userType == 'doctor'
-            ? SignUpDoctorBodyBlocConsumer()
-            : SignUpUserBodyBlocConsumer(),
-      ),
-    );
-  }
+        create: (context) => AuthCubit(AuthService()),
+        child: Scaffold(
+            appBar: AppBar(
+              title: Text(
+                'Sign up',
+                style: TextStyle(
+                    color: AppColors.primaryColor,
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            body: userType == 'doctor'
+                ? SignUpDoctorBodyBlocConsumer()
+                : SignUpUserBodyBlocConsumer(),
+            ),
+        );
+    }
 }

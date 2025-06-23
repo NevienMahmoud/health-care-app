@@ -1,37 +1,49 @@
-import 'package:health_care_app/auth/data/models/user_model.dart';
-
-class DoctorModel extends UserModel {
-    final String specialization;
+class DoctorModel {
+  final String id;
+  final String firstName;
+  final String lastName;
+  final String email;
+  final String userType;
+  final String phoneNumber;
+  final String address;
+  final String? specialization;
+  final String? image;
+  final double? wallet;
+  final double? rate;
+  final String? password;
+  final String? confirmPassword;
 
   DoctorModel({
-    required String firstName,
-    required String lastName,
-    required String email,
-    required String password,
-    required String confirmPassword,
-    required String userType,
-    required this.specialization,
-    required String phoneNumber,
-    required String address,
-  }) : super(
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          password: password,
-          confirmPassword: confirmPassword,       
-          userType: userType,
-          phoneNumber: phoneNumber,
-          address: address,
-        );
-      factory DoctorModel.fromJson(Map<String, dynamic> json) => DoctorModel(
-        firstName: json['firstName'],
-        lastName: json['lastName'],
-        email: json['email'],
-        password: json['password'],
-        confirmPassword: json['confirmPassword'],
-        userType: json['userType'],
-        specialization: json['specialization'],
-        phoneNumber: json['phoneNumber'],
-        address: json['address'],
-      );
-} 
+    required this.id,
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+    required this.userType,
+    required this.phoneNumber,
+    required this.address,
+    this.specialization,
+    this.image,
+    this.wallet,
+    this.rate,
+    this.password,
+    this.confirmPassword,
+  });
+
+  factory DoctorModel.fromJson(Map<String, dynamic> json) {
+    return DoctorModel(
+      id: json['_id'] ?? '',
+      firstName: json['firstName'] ?? '',
+      lastName: json['lastName'] ?? '',
+      email: json['email'] ?? '',
+      userType: json['userType'] ?? '',
+      phoneNumber: json['phoneNumber'] ?? '',
+      address: json['address'] ?? '',
+      specialization: json['specialization'],
+      image: json['image'],
+      wallet: (json['wallet'] ?? 0).toDouble(),
+      rate: (json['rate'] ?? 0).toDouble(),
+    );
+  }
+
+  String get fullName => '$firstName $lastName';
+}

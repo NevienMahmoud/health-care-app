@@ -77,7 +77,7 @@ class AuthService {
   Future<void> deleteUser(String userId) async {
     try {
       final response = await _dio.delete(
-        'http://healthcare-xi-pied.vercel.app/api/patients/patients/:id',
+        'http://healthcare-4scv.vercel.app/api/patients/patients/:id',
       );
 
       if (response.statusCode == 200 || response.statusCode == 204) {
