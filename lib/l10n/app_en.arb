@@ -16,5 +16,20 @@
     "language":"Language",
     "helpSupport":"Help and Support",
     "save":"Save",
-    "cancel":"Cancel"
+    "cancel":"Cancel",
+    "needHelp":"Need Help or have a question?",
+    "faq":"Frequently Asked Questions",
+    "supportMessage":"If you have any issues or inquiries, please contact us through one of the methods below.",
+    "chatWithUs": "Contact Us",
+    "contactUsDescription": "If you need help, feel free to reach out to us. We're here to support you.",
+    "liveChat":"Live Chat",
+    "support": "Support",
+    "faqQ1": "How do I reset my password?",
+    "faqA1": "Go to Settings > Change Password and follow the instructions.",
+    "faqQ2": "How can I contact support?",
+    "faqA2": "You can contact us through the support screen via WhatsApp.",
+    "faqQ3": "How can I book a new appointment?",
+    "faqA3": "From the home screen, tap on 'Book Appointment' and select the doctor and preferred date.",
+    "contactUs": "Contact Us",
+    "chatWithUs": "Chat with us on WhatsApp"
 }

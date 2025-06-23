@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:health_care_app/doctor_layout/setting_screen/help_support_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:health_care_app/auth/pressentation/screens/auht_screen/forgot_pass_screen.dart';
@@ -290,13 +291,18 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Row(
-                  children: [
-                    const Icon(Icons.help, color: Colors.black),
-                    const SizedBox(width: 10),
-                    Text(loc.helpSupport,
-                        style: const TextStyle(color: Colors.black)),
-                  ],
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, SupportScreen.routeName);
+                  },
+                  child: Row(
+                    children: [
+                      const Icon(Icons.help, color: Colors.black),
+                      const SizedBox(width: 10),
+                      Text(loc.helpSupport,
+                          style: const TextStyle(color: Colors.black)),
+                    ],
+                  ),
                 ),
               ],
             ),

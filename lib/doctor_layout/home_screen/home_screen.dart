@@ -21,14 +21,14 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
       'type': "Heart Patient",
       'time': "5:00pm to 5:20pm",
       'date': "13 Aug, 2023",
-      'phone': "01069611488",
+      'phone': "01012345678",
     },
     {
       'name': "Ms. Emily Watson",
       'type': "Heart Patient",
       'time': "3:00pm to 3:30pm",
       'date': "14 Aug, 2023",
-      'phone': "01557596674",
+      'phone': "01512345678",
     },
   ];
 
@@ -105,7 +105,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                         ],
                       ),
                     ),
-                     Padding(
+                    Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Row(
                         children: [
@@ -116,7 +116,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                         ],
                       ),
                     ),
-                     Padding(
+                    Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Row(
                         children: [
@@ -150,7 +150,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
               ),
 
               // Title
-               Padding(
+              Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Row(
                   children: [

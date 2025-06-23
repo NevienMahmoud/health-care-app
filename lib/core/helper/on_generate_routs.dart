@@ -16,7 +16,8 @@ import 'package:health_care_app/patient_layout/patient_setting_screen/patient_se
 import 'package:health_care_app/splash/views/splash_screen.dart';
 import 'package:health_care_app/auth/pressentation/screens/auht_screen/user_selection_screen.dart';
 import 'package:health_care_app/auth/pressentation/screens/auht_screen/verify_number.dart';
-import 'package:health_care_app/doctor_layout/setting_screen/notification_setting_screen.dart';
+import 'package:health_care_app/doctor_layout/setting_screen/help_support_screen.dart';
+
 
 Route<dynamic> onGenerateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -61,8 +62,8 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
   case ChangePasswordScreen.routeName:
   return MaterialPageRoute(builder: (context) => const ChangePasswordScreen());
 
-  case NotificationSettingsScreen.routeName:
-  return MaterialPageRoute(builder: (context) => const NotificationSettingsScreen());
+  case SupportScreen.routeName:
+  return MaterialPageRoute(builder: (context) => const SupportScreen());
 
   case PatientHomeScreen.routeName:
   return MaterialPageRoute(builder: (context) => const PatientHomeScreen());

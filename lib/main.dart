@@ -12,30 +12,35 @@ void main() async {
   final settingProvider = SettingProvider();
   await settingProvider.getLang();
 
-runApp( ChangeNotifierProvider(
-  create: (context) => settingProvider,
-  child: const HealthCare(), ), ); }
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => settingProvider,
+      child: const HealthCare(),
+    ),
+  );
+}
 
 class HealthCare extends StatelessWidget {
   const HealthCare({super.key});
 
-@override Widget build(BuildContext context) {
-  SettingProvider settingProvider = Provider.of<SettingProvider>(context);
-  return MaterialApp(
-      localizationsDelegates:
-      const [ AppLocalizations.delegate,
+  @override
+  Widget build(BuildContext context) {
+    SettingProvider settingProvider = Provider.of<SettingProvider>(context);
+    return MaterialApp(
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-     supportedLocales:
-     const [ Locale('en'),
-             Locale('ar'),
-     ],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('ar'),
+      ],
       locale: Locale(settingProvider.language),
       debugShowCheckedModeBanner: false,
       onGenerateRoute: onGenerateRoute,
       initialRoute: SplashScreen.routeName,
-   );
+    );
   }
 }
