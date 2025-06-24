@@ -1,12 +1,21 @@
 part of 'doctor_cubit.dart';
 
 @immutable
-abstract class DoctorState {}
+sealed class DoctorState {}
 
-class DoctorInitial extends DoctorState {}
+final class DoctorInitial extends DoctorState {}
+
+final class DoctorLoading extends DoctorState {}
+
+final class DoctorSuccess extends DoctorState {}
 
 class DoctorLoaded extends DoctorState {
-  final DoctorModel doctor;
+  final DoctorProfileModel doctor;
 
   DoctorLoaded(this.doctor);
+}
+
+final class DoctorError extends DoctorState {
+  final String message;
+  DoctorError(this.message);
 }

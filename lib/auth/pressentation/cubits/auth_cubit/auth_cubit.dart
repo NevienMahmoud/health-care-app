@@ -1,26 +1,67 @@
 import 'dart:developer';
-
-import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:health_care_app/auth/data/models/user_model.dart';
-import 'package:health_care_app/auth/data/services/auth_service.dart';
 import 'package:meta/meta.dart';
+import 'package:health_care_app/auth/data/services/auth_service.dart';
+import 'package:health_care_app/auth/data/models/doctor_profile_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dio/dio.dart';
 
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthStates> {
-  AuthCubit(this._authService) : super(AuthInitial());
   final AuthService _authService;
-  Future<void> signup(
-      {String? specialization,
-        required String email,
-        required String password,
-        required String firstName,
-        required String lastName,
-        required String confirmPassword,
-        required String phoneNumber,
-        required String address,
-        required String userType}) async {
+
+  AuthCubit(this._authService) : super(AuthInitial());
+
+  Future<void> login(String email, String password, String userType) async {
+    emit(AuthLoading());
+    try {
+      final response = await _authService.login(email, password, userType);
+      final user = response['user'];
+
+      log('👤 User from response: $user');
+
+      final extractedUserType = user['userType'];
+      final userId = user['_id'] ?? user['id'];
+
+      log('📌 User type: $extractedUserType');
+      log('🆔 User ID: $userId');
+
+      DoctorProfileModel? doctorProfile;
+
+      // ✅ لو المستخدم دكتور، استدعي بياناته الكاملة
+      if (extractedUserType == 'doctor' && userId != null) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('doctorId', userId);
+
+        final doctorResponse = await Dio().get(
+          'http://healthcare-4scv.vercel.app/api/doctors/doctors/$userId',
+        );
+
+        doctorProfile = DoctorProfileModel.fromJson(doctorResponse.data['doctor']);
+      }
+
+      emit(AuthSuccess(
+        userType: extractedUserType,
+        doctor: doctorProfile,
+      ));
+    } catch (e) {
+      log('❌ Login error: $e');
+      emit(AuthError(e.toString()));
+    }
+  }
+
+  Future<void> signup({
+    String? specialization,
+    required String email,
+    required String password,
+    required String firstName,
+    required String lastName,
+    required String confirmPassword,
+    required String phoneNumber,
+    required String address,
+    required String userType,
+  }) async {
     emit(AuthLoading());
     try {
       await _authService.signup(
@@ -34,18 +75,8 @@ class AuthCubit extends Cubit<AuthStates> {
         address: address,
         userType: userType,
       );
-      emit(AuthSuccess());
-    } on Exception catch (e) {
-      emit(AuthError(e.toString()));
-    }
-  }
-
-  Future<void> login(String email, String password , String userType) async {
-    emit(AuthLoading());
-    try {
-      await _authService.login(email, password, userType );
-      emit(AuthSuccess());
-    } on Exception catch (e) {
+      emit(AuthSuccess(userType: userType)); // ✅ بدون doctor
+    } catch (e) {
       emit(AuthError(e.toString()));
     }
   }
