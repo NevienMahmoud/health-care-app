@@ -7,9 +7,9 @@ final class DoctorInitial extends DoctorState {}
 
 final class DoctorLoading extends DoctorState {}
 
-final class DoctorSuccess extends DoctorState {}
+final class DoctorSuccess extends DoctorState {} // تسيبيه موجود لو حبيتي
 
-class DoctorLoaded extends DoctorState {
+final class DoctorLoaded extends DoctorState {
   final DoctorProfileModel doctor;
 
   DoctorLoaded(this.doctor);

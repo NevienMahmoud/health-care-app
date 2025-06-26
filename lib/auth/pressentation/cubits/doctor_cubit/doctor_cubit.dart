@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:health_care_app/auth/data/models/doctor_profile_model.dart';
@@ -8,35 +7,44 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'doctor_state.dart';
 
 class DoctorCubit extends Cubit<DoctorState> {
-  DoctorCubit() : super(DoctorInitial()) {
-    getDoctorProfile();
-  }
+  DoctorCubit() : super(DoctorInitial());
 
   DoctorProfileModel? doctor;
 
-  Future<void> getDoctorProfile() async {
+  Future<DoctorProfileModel?> getDoctorProfile() async {
     emit(DoctorLoading());
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      final doctorId = prefs.getString('doctorId');
+      final email = prefs.getString('email');
 
-      log('Retrieved doctorId: $doctorId');
-
-      if (doctorId == null || doctorId.isEmpty) {
-        emit(DoctorError('Doctor ID not found'));
-        return;
+      if (email == null || email.isEmpty) {
+        emit(DoctorError('Doctor email not found'));
+        return null;
       }
 
       final response = await Dio().get(
-        'http://healthcare-4scv.vercel.app/api/doctors/doctors/$doctorId',
+        'https://healthcare-4scv.vercel.app/api/doctors/doctors',
       );
 
-      doctor = DoctorProfileModel.fromJson(response.data['doctor']);
-      emit(DoctorSuccess());
+      final List<dynamic> doctorsData = response.data['data'];
+
+      final doctorData = doctorsData.firstWhere(
+            (doc) => doc['email'] == email,
+        orElse: () => null,
+      );
+
+      if (doctorData == null) {
+        emit(DoctorError('Doctor not found with this email'));
+        return null;
+      }
+
+      doctor = DoctorProfileModel.fromJson(doctorData);
+      emit(DoctorLoaded(doctor!));
+      return doctor;
     } catch (e) {
-      log("DoctorCubit error: $e");
       emit(DoctorError("Failed to fetch doctor data"));
+      return null;
     }
   }
 }

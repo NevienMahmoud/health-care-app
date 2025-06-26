@@ -1,10 +1,11 @@
 import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:health_care_app/auth/data/models/user_model.dart';
 import 'package:meta/meta.dart';
+import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:health_care_app/auth/data/services/auth_service.dart';
 import 'package:health_care_app/auth/data/models/doctor_profile_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:dio/dio.dart';
 
 part 'auth_state.dart';
 
@@ -13,37 +14,25 @@ class AuthCubit extends Cubit<AuthStates> {
 
   AuthCubit(this._authService) : super(AuthInitial());
 
-  Future<void> login(String email, String password, String userType) async {
+  Future<UserModel?> login(String email, String password, String userType) async {
     emit(AuthLoading());
     try {
       final response = await _authService.login(email, password, userType);
-      final user = response['user'];
+      final UserModel? user = response;
+
+      if (user == null) {
+        throw Exception("User is null");
+      }
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('email', user.email);
+      await prefs.setString('firstName', user.firstName);
+      await prefs.setString('lastName',user.lastName);
 
       log('👤 User from response: $user');
 
-      final extractedUserType = user['userType'];
-      final userId = user['_id'] ?? user['id'];
-
-      log('📌 User type: $extractedUserType');
-      log('🆔 User ID: $userId');
-
-      DoctorProfileModel? doctorProfile;
-
-      // ✅ لو المستخدم دكتور، استدعي بياناته الكاملة
-      if (extractedUserType == 'doctor' && userId != null) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('doctorId', userId);
-
-        final doctorResponse = await Dio().get(
-          'http://healthcare-4scv.vercel.app/api/doctors/doctors/$userId',
-        );
-
-        doctorProfile = DoctorProfileModel.fromJson(doctorResponse.data['doctor']);
-      }
-
       emit(AuthSuccess(
-        userType: extractedUserType,
-        doctor: doctorProfile,
+        user: user,
       ));
     } catch (e) {
       log('❌ Login error: $e');
@@ -51,7 +40,7 @@ class AuthCubit extends Cubit<AuthStates> {
     }
   }
 
-  Future<void> signup({
+  Future<UserModel?> signup({
     String? specialization,
     required String email,
     required String password,
@@ -75,7 +64,10 @@ class AuthCubit extends Cubit<AuthStates> {
         address: address,
         userType: userType,
       );
-      emit(AuthSuccess(userType: userType)); // ✅ بدون doctor
+
+      UserModel? user = UserModel(firstName: firstName, lastName: lastName, email: email);
+
+      emit(AuthSuccess(user: user));
     } catch (e) {
       emit(AuthError(e.toString()));
     }

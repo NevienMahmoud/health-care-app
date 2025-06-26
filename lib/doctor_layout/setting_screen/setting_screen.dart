@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:health_care_app/doctor_layout/setting_screen/help_support_screen.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:health_care_app/auth/pressentation/screens/auht_screen/forgot_pass_screen.dart';
 import 'package:health_care_app/core/constants/app_colors/app_colors.dart';
@@ -8,6 +8,9 @@ import 'package:health_care_app/doctor_layout/setting_screen/change_password_scr
 import 'package:health_care_app/doctor_layout/setting_screen/wallet_screen.dart';
 import 'package:health_care_app/providers/setting_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:health_care_app/auth/pressentation/cubits/auth_cubit/auth_cubit.dart';
+import 'package:health_care_app/auth/pressentation/cubits/doctor_cubit/doctor_cubit.dart';
+import 'package:provider/provider.dart';
 
 class SettingScreen extends StatefulWidget {
   static const routeName = 'doctorsetting';
@@ -58,7 +61,8 @@ class _SettingScreenState extends State<SettingScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SwitchListTile(
-                    title: Text(AppLocalizations.of(context)!.receiveNotifications),
+                    title: Text(
+                        AppLocalizations.of(context)!.receiveNotifications),
                     value: tempReceive,
                     activeColor: AppColors.primaryColor,
                     onChanged: (val) {
@@ -147,166 +151,193 @@ class _SettingScreenState extends State<SettingScreen> {
     final lang = provider.language;
     final loc = AppLocalizations.of(context)!;
 
+    final authState = context.watch<AuthCubit>().state;
+    final doctorName = authState is AuthSuccess
+        ? 'Dr ${authState.user?.firstName ?? ''} ${authState.user?.lastName ?? ''}'
+        : 'Doctor Name';
+
     return SafeArea(
       child: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Text(
-                loc.setting,
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 25,
-                    color: Colors.black),
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Row(
-              children: [
-                CircleAvatar(
-                  backgroundColor: AppColors.primaryColor,
-                  radius: 33,
-                  child: CircleAvatar(
-                    backgroundImage: AssetImage('assets/images/apple.png'),
-                    radius: 30,
+          : BlocBuilder<DoctorCubit, DoctorState>(
+              builder: (context, docState) {
+                String specialization = 'Specialization';
+                String rating = '0.0';
+
+                if (docState is DoctorLoaded) {
+                  specialization = docState.doctor.specialization;
+                  rating = docState.doctor.averageRating.toStringAsFixed(1);
+                }
+
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Text(
+                          loc.setting,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 25,
+                              color: Colors.black),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          const CircleAvatar(
+                            backgroundColor: AppColors.primaryColor,
+                            radius: 33,
+                            child: CircleAvatar(
+                              backgroundImage:
+                                  AssetImage('assets/images/apple.png'),
+                              radius: 30,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                doctorName,
+                                style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                specialization,
+                                style: const TextStyle(
+                                    fontSize: 15, color: Colors.black),
+                              ),
+                              Row(
+                                children: [
+                                  const Icon(Icons.star_rounded,
+                                      color: Color(0xffFFC700)),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    rating,
+                                    style: const TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context)
+                              .pushNamed(WalletScreen.routeName);
+                        },
+                        child: Row(
+                          children: [
+                            const Icon(Icons.wallet),
+                            const SizedBox(width: 10),
+                            Text(loc.wallet,
+                                style: const TextStyle(
+                                    fontSize: 18, color: Colors.black)),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Divider(color: Colors.black),
+                      const SizedBox(height: 10),
+                      Text(loc.security,
+                          style: const TextStyle(
+                              fontSize: 18, color: Colors.black)),
+                      const SizedBox(height: 10),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(
+                              context, ChangePasswordScreen.routeName);
+                        },
+                        child: Row(
+                          children: [
+                            const Icon(Icons.lock),
+                            const SizedBox(width: 10),
+                            Text(loc.changePassword,
+                                style: const TextStyle(color: Colors.black))
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(
+                              context, ForgotPassword.routeName);
+                        },
+                        child: Row(
+                          children: [
+                            const Icon(Icons.lock_open),
+                            const SizedBox(width: 10),
+                            Text(loc.forgotPassword,
+                                style: const TextStyle(color: Colors.black))
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Divider(color: Colors.black),
+                      const SizedBox(height: 10),
+                      Text(loc.general,
+                          style: const TextStyle(
+                              fontSize: 18, color: Colors.black)),
+                      const SizedBox(height: 10),
+                      GestureDetector(
+                        onTap: () => _showNotificationDialog(context),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.notifications,
+                                color: Colors.black),
+                            const SizedBox(width: 10),
+                            Text(loc.notification,
+                                style: const TextStyle(color: Colors.black)),
+                            const Spacer(),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      GestureDetector(
+                        onTap: () => _showLanguageDialog(context),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.language, color: Colors.black),
+                            const SizedBox(width: 10),
+                            Text(loc.language,
+                                style: const TextStyle(color: Colors.black)),
+                            const Spacer(),
+                            Text(lang == 'en' ? 'English' : 'العربية',
+                                style: const TextStyle(
+                                    color: AppColors.primaryColor,
+                                    fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, SupportScreen.routeName);
+                        },
+                        child: Row(
+                          children: [
+                            const Icon(Icons.help, color: Colors.black),
+                            const SizedBox(width: 10),
+                            Text(loc.helpSupport,
+                                style: const TextStyle(color: Colors.black)),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Dr.Alexa',
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black)),
-                    SizedBox(height: 5),
-                    Text('Heart Specilist',
-                        style:
-                        TextStyle(fontSize: 15, color: Colors.black)),
-                    Row(
-                      children: [
-                        Icon(Icons.star_rounded,
-                            color: Color(0xffFFC700)),
-                        SizedBox(width: 10),
-                        Text('4.8',
-                            style: TextStyle(
-                                fontSize: 10,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold)),
-                      ],
-                    )
-                  ],
-                )
-              ],
-            ),
-            const SizedBox(height: 20),
-            GestureDetector(
-              onTap: () {
-                Navigator.of(context).pushNamed(WalletScreen.routeName);
+                );
               },
-              child: Row(
-                children: [
-                  const Icon(Icons.wallet),
-                  const SizedBox(width: 10),
-                  Text(loc.wallet,
-                      style: const TextStyle(
-                          fontSize: 18, color: Colors.black)),
-                ],
-              ),
             ),
-            const SizedBox(height: 10),
-            const Divider(color: Colors.black),
-            const SizedBox(height: 10),
-            Text(loc.security,
-                style: const TextStyle(
-                    fontSize: 18, color: Colors.black)),
-            const SizedBox(height: 10),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(
-                    context, ChangePasswordScreen.routeName);
-              },
-              child: Row(
-                children: [
-                  const Icon(Icons.lock),
-                  const SizedBox(width: 10),
-                  Text(loc.changePassword,
-                      style: const TextStyle(color: Colors.black))
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, ForgotPassword.routeName);
-              },
-              child: Row(
-                children: [
-                  const Icon(Icons.lock_open),
-                  const SizedBox(width: 10),
-                  Text(loc.forgotPassword,
-                      style: const TextStyle(color: Colors.black))
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-            const Divider(color: Colors.black),
-            const SizedBox(height: 10),
-            Text(loc.general,
-                style: const TextStyle(
-                    fontSize: 18, color: Colors.black)),
-            const SizedBox(height: 10),
-            GestureDetector(
-              onTap: () => _showNotificationDialog(context),
-              child: Row(
-                children: [
-                  const Icon(Icons.notifications, color: Colors.black),
-                  const SizedBox(width: 10),
-                  Text(loc.notification,
-                      style: const TextStyle(color: Colors.black)),
-                  const Spacer(),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-            GestureDetector(
-              onTap: () => _showLanguageDialog(context),
-              child: Row(
-                children: [
-                  const Icon(Icons.language, color: Colors.black),
-                  const SizedBox(width: 10),
-                  Text(loc.language,
-                      style: const TextStyle(color: Colors.black)),
-                  const Spacer(),
-                  Text(lang == 'en' ? 'English' : 'العربية',
-                      style: const TextStyle(
-                          color: AppColors.primaryColor,
-                          fontWeight: FontWeight.bold)),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, SupportScreen.routeName);
-              },
-              child: Row(
-                children: [
-                  const Icon(Icons.help, color: Colors.black),
-                  const SizedBox(width: 10),
-                  Text(loc.helpSupport,
-                      style: const TextStyle(color: Colors.black)),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:health_care_app/core/constants/app_colors/app_colors.dart';
 import 'package:health_care_app/doctor_layout/home_screen/home_screen.dart';
 import 'package:health_care_app/doctor_layout/notification_screen/notification_screen.dart';
 import 'package:health_care_app/doctor_layout/setting_screen/setting_screen.dart';
-import 'package:health_care_app/auth/pressentation/cubits/doctor_cubit/doctor_cubit.dart';import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DoctorLayoutScreen extends StatefulWidget {
   static const routeName = 'doctorlayout';
@@ -26,58 +25,55 @@ class _DoctorLayoutScreenState extends State<DoctorLayoutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-        create: (context) => DoctorCubit(),
-        child: Scaffold(
-            backgroundColor: AppColors.white,
-            bottomNavigationBar: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: BottomNavigationBar(
-                  backgroundColor: AppColors.white,
-                  fixedColor: Colors.black,
-                  type: BottomNavigationBarType.fixed,
-                  onTap: (value) {
-                    setState(() {
-                      selectedIndex = value;
-                    });
-                  },
-                  currentIndex: selectedIndex,
-                  items: [
-                    BottomNavigationBarItem(
-                      label: AppLocalizations.of(context)!.home,
-                      icon: Icon(
-                        Icons.home_outlined,
-                        color: selectedIndex == 0
-                            ? AppColors.primaryColor
-                            : Colors.black,
-                      ),
-                    ),
-                    BottomNavigationBarItem(
-                      label: AppLocalizations.of(context)!.notification,
-                      icon: Icon(
-                        Icons.notifications_none,
-                        color: selectedIndex == 1
-                            ? AppColors.primaryColor
-                            : Colors.black,
-                      ),
-                    ),
-                    BottomNavigationBarItem(
-                      label: AppLocalizations.of(context)!.setting,
-                      icon: Icon(
-                        Icons.settings,
-                        color: selectedIndex == 2
-                            ? AppColors.primaryColor
-                            : Colors.black,
-                      ),
-                    ),
-                  ],
+    return Scaffold(
+        backgroundColor: AppColors.white,
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: BottomNavigationBar(
+              backgroundColor: AppColors.white,
+              fixedColor: Colors.black,
+              type: BottomNavigationBarType.fixed,
+              onTap: (value) {
+                setState(() {
+                  selectedIndex = value;
+                });
+              },
+              currentIndex: selectedIndex,
+              items: [
+                BottomNavigationBarItem(
+                  label: AppLocalizations.of(context)!.home,
+                  icon: Icon(
+                    Icons.home_outlined,
+                    color: selectedIndex == 0
+                        ? AppColors.primaryColor
+                        : Colors.black,
+                  ),
                 ),
-              ),
+                BottomNavigationBarItem(
+                  label: AppLocalizations.of(context)!.notification,
+                  icon: Icon(
+                    Icons.notifications_none,
+                    color: selectedIndex == 1
+                        ? AppColors.primaryColor
+                        : Colors.black,
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  label: AppLocalizations.of(context)!.setting,
+                  icon: Icon(
+                    Icons.settings,
+                    color: selectedIndex == 2
+                        ? AppColors.primaryColor
+                        : Colors.black,
+                  ),
+                ),
+              ],
             ),
-            body: screens[selectedIndex],
-            ),
+          ),
+        ),
+        body: screens[selectedIndex],
         );
     }
 }

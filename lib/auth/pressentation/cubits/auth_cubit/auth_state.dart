@@ -8,12 +8,12 @@ final class AuthInitial extends AuthStates {}
 final class AuthLoading extends AuthStates {}
 
 final class AuthSuccess extends AuthStates {
-  final String? userType;
+  final UserModel? user;
   final DoctorProfileModel? doctor;
 
   AuthSuccess({
-  this.userType,
-  this.doctor,
+    this.user,
+    this.doctor,
   });
 }
 

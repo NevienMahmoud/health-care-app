@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:health_care_app/auth/pressentation/cubits/auth_cubit/auth_cubit.dart';
+import 'package:health_care_app/auth/pressentation/cubits/doctor_cubit/doctor_cubit.dart';
+import 'package:health_care_app/auth/data/services/auth_service.dart';
 import 'package:health_care_app/core/helper/on_generate_routs.dart';
-import 'package:health_care_app/patient_layout/patient_home_screen/patient_home_screen.dart';
 import 'package:health_care_app/providers/setting_provider.dart';
 import 'package:health_care_app/splash/views/splash_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -13,8 +16,16 @@ void main() async {
   await settingProvider.getLang();
 
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => settingProvider,
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => settingProvider),
+        BlocProvider<AuthCubit>(
+          create: (_) => AuthCubit(AuthService()),
+        ),
+        BlocProvider<DoctorCubit>(
+          create: (_) => DoctorCubit()..getDoctorProfile(), // ✅ تحميل البيانات مباشرة
+        ),
+      ],
       child: const HealthCare(),
     ),
   );
@@ -26,21 +37,22 @@ class HealthCare extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SettingProvider settingProvider = Provider.of<SettingProvider>(context);
+
     return MaterialApp(
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en'),
-        Locale('ar'),
-      ],
-      locale: Locale(settingProvider.language),
-      debugShowCheckedModeBanner: false,
-      onGenerateRoute: onGenerateRoute,
-      initialRoute: SplashScreen.routeName,
-    );
-  }
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en'),
+          Locale('ar'),
+        ],
+        locale: Locale(settingProvider.language),
+        debugShowCheckedModeBanner: false,
+        onGenerateRoute: onGenerateRoute,
+        initialRoute: SplashScreen.routeName,
+        );
+    }
 }

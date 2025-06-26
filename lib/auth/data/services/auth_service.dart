@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:health_care_app/auth/data/models/user_model.dart';
 
 class AuthService {
   final Dio _dio = Dio(
@@ -8,7 +9,7 @@ class AuthService {
     ),
   );
 
-  Future<Map<String, dynamic>> login(String email, String password, String userType) async {
+  Future<UserModel?> login(String email, String password, String userType) async {
     try {
       final response = await _dio.post(
         '/auth/login',
@@ -20,7 +21,7 @@ class AuthService {
       );
 
       if (response.statusCode == 200) {
-        return response.data;
+        return UserModel.fromJson(response.data['user']);
       } else {
         throw Exception('Login failed');
       }
