@@ -16,7 +16,7 @@ class DoctorCubit extends Cubit<DoctorState> {
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      final email = prefs.getString('email');
+      final email = prefs.getString('logged_in_email'); // ✅ التعديل هنا
 
       if (email == null || email.isEmpty) {
         emit(DoctorError('Doctor email not found'));

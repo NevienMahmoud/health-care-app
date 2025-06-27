@@ -36,5 +36,9 @@
     "yes": "نعم",
     "logoutConfirmationTitle": "تأكيد تسجيل الخروج",
     "logoutSuccess": "تم تسجيل الخروج بنجاح",
-    "cancel":"إلغاء"
+    "chooseImageFromGallery": "اختر صورة من المعرض",
+    "deleteImage": "حذف الصورة",
+    "cancel": "الغاء",
+    "showImage": "عرض الصورة",
+    "change":"تغيير الصورة"
 }

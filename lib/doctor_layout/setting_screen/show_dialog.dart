@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:health_care_app/auth/pressentation/cubits/auth_cubit/auth_cubit.dart';
+import 'package:health_care_app/auth/pressentation/cubits/doctor_cubit/doctor_cubit.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:health_care_app/core/constants/app_colors/app_colors.dart';
@@ -117,38 +119,28 @@ class ShowDialog {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: Text(loc.cancel,style: TextStyle(color: AppColors.primaryColor),),
+                child: Text(
+                  loc.cancel,
+                  style: const TextStyle(color: AppColors.primaryColor),
+                ),
               ),
               TextButton(
-                onPressed: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.clear();
-
-                  if (!context.mounted) return;
-
-                  Navigator.of(context).pop();
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(loc.logoutSuccess),
-                      duration: const Duration(seconds: 1),
-                    ),
-                  );
-
-                  await Future.delayed(const Duration(seconds: 1));
-
-                  if (!context.mounted) return;
+                onPressed: () {
+                  Navigator.of(context).pop(); // يقفل الديالوج
 
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     UserSelection.routeName,
                         (route) => false,
                   );
                 },
-                child: Text(loc.yes, style: const TextStyle(color: Colors.black)),
+                child: Text(
+                  loc.yes,
+                  style: const TextStyle(color: Colors.black),
+                ),
               ),
             ],
           );
-          },
-        );
-    }
+        },
+    );
+  }
 }

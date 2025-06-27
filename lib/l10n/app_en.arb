@@ -37,5 +37,9 @@
     "yes": "Yes",
     "logoutConfirmationTitle": "Confirm Logout",
     "logoutSuccess": "Logged out successfully",
-    "cancel":"Cancel"
+    "chooseImageFromGallery": "Choose Image From Gallery",
+    "deleteImage": "Delete Image",
+    "cancel": "Cancel",
+    "showImage": "Show Image",
+    "change":"Change Image"
 }

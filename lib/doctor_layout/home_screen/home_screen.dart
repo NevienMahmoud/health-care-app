@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:health_care_app/auth/pressentation/cubits/auth_cubit/auth_cubit.dart';
+import 'package:health_care_app/core/constants/app_assets/profile_image_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:health_care_app/core/constants/app_colors/app_colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -62,7 +65,6 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
   }
 
   void _openWhatsAppSimple(String phone) async {
-    // تأكد من أن رقم الهاتف يبدأ بـ كود الدولة (مثلاً 20 للمصريين)
     String formattedPhone = phone;
     if (!phone.startsWith('20')) {
       formattedPhone = '20' + phone;
@@ -80,6 +82,10 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.watch<AuthCubit>().state;
+    final doctorName = authState is AuthSuccess
+        ? ' ${authState.user?.firstName?? ''} '
+        : 'Doctor Name';
     return SafeArea(
         child: Column(
             children: [
@@ -94,13 +100,14 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                 ),
                 child: Column(
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: [
-                          CircleAvatar(
-                            backgroundImage: AssetImage('assets/images/apple.png'),
-                            radius: 30,
+                          ProfileImage(
+                            firstName: authState is AuthSuccess
+                                ? authState.user?.firstName ?? ''
+                                : '',
                           ),
                         ],
                       ),
@@ -110,7 +117,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                       child: Row(
                         children: [
                           Text(
-                            AppLocalizations.of(context)!.welcome,
+                            '${AppLocalizations.of(context)!.welcome} $doctorName',
                             style: TextStyle(color: Colors.white, fontSize: 20),
                           ),
                         ],
