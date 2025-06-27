@@ -23,7 +23,7 @@ void main() async {
           create: (_) => AuthCubit(AuthService()),
         ),
         BlocProvider<DoctorCubit>(
-          create: (_) => DoctorCubit()..getDoctorProfile(), // ✅ تحميل البيانات مباشرة
+          create: (_) => DoctorCubit()..getDoctorProfile(),
         ),
       ],
       child: const HealthCare(),

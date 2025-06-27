@@ -31,5 +31,11 @@
     "faqQ3": "How can I book a new appointment?",
     "faqA3": "From the home screen, tap on 'Book Appointment' and select the doctor and preferred date.",
     "contactUs": "Contact Us",
-    "chatWithUs": "Chat with us on WhatsApp"
+    "chatWithUs": "Chat with us on WhatsApp",
+    "logout":"Logout",
+    "areYouSureLogout": "Are you sure you want to logout?",
+    "yes": "Yes",
+    "logoutConfirmationTitle": "Confirm Logout",
+    "logoutSuccess": "Logged out successfully",
+    "cancel":"Cancel"
 }

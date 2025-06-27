@@ -24,7 +24,7 @@ class DoctorCubit extends Cubit<DoctorState> {
       }
 
       final response = await Dio().get(
-        'https://healthcare-4scv.vercel.app/api/doctors/doctors',
+        'https://healthcare-4scv.vercel.app/api/doctors',
       );
 
       final List<dynamic> doctorsData = response.data['data'];
