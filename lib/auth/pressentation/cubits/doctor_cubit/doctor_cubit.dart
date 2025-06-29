@@ -16,7 +16,7 @@ class DoctorCubit extends Cubit<DoctorState> {
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      final email = prefs.getString('logged_in_email'); // ✅ التعديل هنا
+      final email = prefs.getString('logged_in_email'); // ✅ استخدمي المفتاح الصحيح
 
       if (email == null || email.isEmpty) {
         emit(DoctorError('Doctor email not found'));
@@ -24,7 +24,7 @@ class DoctorCubit extends Cubit<DoctorState> {
       }
 
       final response = await Dio().get(
-        'https://healthcare-4scv.vercel.app/api/doctors',
+        'https://healthcare-4scv.vercel.app/api/doctors/doctors',
       );
 
       final List<dynamic> doctorsData = response.data['data'];
@@ -38,6 +38,9 @@ class DoctorCubit extends Cubit<DoctorState> {
         emit(DoctorError('Doctor not found with this email'));
         return null;
       }
+
+      // ✅ حفظ doctorId في SharedPreferences
+      await prefs.setString('doctorId', doctorData['_id']);
 
       doctor = DoctorProfileModel.fromJson(doctorData);
       emit(DoctorLoaded(doctor!));

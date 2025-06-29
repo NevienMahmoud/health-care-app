@@ -3,6 +3,7 @@ import 'package:health_care_app/auth/pressentation/screens/auht_screen/create_pa
 import 'package:health_care_app/auth/pressentation/screens/auht_screen/signup_screen.dart';
 import 'package:health_care_app/auth/pressentation/screens/auht_screen/forgot_pass_screen.dart';
 import 'package:health_care_app/auth/pressentation/screens/auht_screen/login_screen.dart';
+import 'package:health_care_app/doctor_layout/avaliable_slots_screen/available_solts_screen.dart';
 import 'package:health_care_app/doctor_layout/doctor_layout_screen.dart';
 import 'package:health_care_app/doctor_layout/home_screen/home_screen.dart';
 import 'package:health_care_app/doctor_layout/notification_screen/notification_screen.dart';
@@ -55,6 +56,9 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
 
   case SettingScreen.routeName:
   return MaterialPageRoute(builder: (context) => const SettingScreen());
+
+  case AvailableSlotsScreen.routeName:
+  return MaterialPageRoute(builder: (context) => const AvailableSlotsScreen());
 
   case WalletScreen.routeName:
   return MaterialPageRoute(builder: (context) => const WalletScreen());

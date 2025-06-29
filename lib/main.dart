@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:health_care_app/auth/pressentation/cubits/appointment_cubit/appointment_cubit.dart';
 import 'package:health_care_app/auth/pressentation/cubits/auth_cubit/auth_cubit.dart';
+import 'package:health_care_app/auth/pressentation/cubits/available_slot_cubit/available_slots_cubit.dart';
 import 'package:health_care_app/auth/pressentation/cubits/doctor_cubit/doctor_cubit.dart';
 import 'package:health_care_app/auth/data/services/auth_service.dart';
 import 'package:health_care_app/core/helper/on_generate_routs.dart';
@@ -23,8 +25,13 @@ void main() async {
           create: (_) => AuthCubit(AuthService()),
         ),
         BlocProvider<DoctorCubit>(
-          create: (_) => DoctorCubit()..getDoctorProfile(),
+          create: (_) => DoctorCubit(),
         ),
+        BlocProvider<AppointmentCubit>(
+          create: (_) => AppointmentCubit(),
+        ),
+        BlocProvider<AvailableSlotsCubit>(
+          create: (_) => AvailableSlotsCubit()),
       ],
       child: const HealthCare(),
     ),

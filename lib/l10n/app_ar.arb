@@ -40,5 +40,18 @@
     "deleteImage": "حذف الصورة",
     "cancel": "الغاء",
     "showImage": "عرض الصورة",
-    "change":"تغيير الصورة"
+    "change":"تغيير الصورة",
+    "available":"المواعيد المتاحة",
+    "selectDate": "اختر التاريخ",
+    "selectTime": "اختر الوقت",
+    "addSlot": "إضافة موعد",
+    "pleaseEnterDateTime": "من فضلك أدخل التاريخ والوقت معًا.",
+    "deleteSlot": "حذف الموعد",
+    "confirmDeleteSlot": "هل أنت متأكد أنك تريد حذف هذا الموعد؟",
+    "delete": "حذف",
+    "selectTimeToDelete": "اختر الوقت الذي تريد حذفه",
+    "slotDeleted": "✅ تم حذف الموعد بنجاح",
+    "timeSlotDeleted": "✅ تم حذف وقت الموعد بنجاح",
+    "slotsUpdated": "✅ تم تحديث المواعيد بنجاح",
+    "updateFailed": "❌ فشل في التحديث:"
 }

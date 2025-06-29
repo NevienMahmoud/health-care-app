@@ -3,6 +3,7 @@ import 'package:health_care_app/core/constants/app_colors/app_colors.dart';
 import 'package:health_care_app/doctor_layout/home_screen/home_screen.dart';
 import 'package:health_care_app/doctor_layout/notification_screen/notification_screen.dart';
 import 'package:health_care_app/doctor_layout/setting_screen/setting_screen.dart';
+import 'package:health_care_app/doctor_layout/avaliable_slots_screen/available_solts_screen.dart'; // ✅ استيراد السكرين الجديدة
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DoctorLayoutScreen extends StatefulWidget {
@@ -20,6 +21,7 @@ class _DoctorLayoutScreenState extends State<DoctorLayoutScreen> {
   final List<Widget> screens = [
     DoctorHomeScreen(),
     NotificationScreen(),
+    AvailableSlotsScreen(), // ✅ الشاشة الجديدة في الترتيب
     SettingScreen(),
   ];
 
@@ -35,12 +37,12 @@ class _DoctorLayoutScreenState extends State<DoctorLayoutScreen> {
               backgroundColor: AppColors.white,
               fixedColor: Colors.black,
               type: BottomNavigationBarType.fixed,
+              currentIndex: selectedIndex,
               onTap: (value) {
                 setState(() {
                   selectedIndex = value;
                 });
               },
-              currentIndex: selectedIndex,
               items: [
                 BottomNavigationBarItem(
                   label: AppLocalizations.of(context)!.home,
@@ -61,10 +63,19 @@ class _DoctorLayoutScreenState extends State<DoctorLayoutScreen> {
                   ),
                 ),
                 BottomNavigationBarItem(
+                  label: AppLocalizations.of(context)!.available, // أو ترجمها من AppLocalizations لما تعملها
+                  icon: Icon(
+                    Icons.calendar_today_outlined,
+                    color: selectedIndex == 2
+                        ? AppColors.primaryColor
+                        : Colors.black,
+                  ),
+                ),
+                BottomNavigationBarItem(
                   label: AppLocalizations.of(context)!.setting,
                   icon: Icon(
                     Icons.settings,
-                    color: selectedIndex == 2
+                    color: selectedIndex == 3
                         ? AppColors.primaryColor
                         : Colors.black,
                   ),
