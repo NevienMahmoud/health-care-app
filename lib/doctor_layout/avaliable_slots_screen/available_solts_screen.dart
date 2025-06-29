@@ -81,12 +81,13 @@ class _AvailableSlotsScreenState extends State<AvailableSlotsScreen> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('Delete Slot'),
+          title: Text(AppLocalizations.of(context)!.deleteSlot),
           content: Text(AppLocalizations.of(context)!.confirmDeleteSlot),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(AppLocalizations.of(context)!.cancel,style: TextStyle(color: Colors.black),),
+              child: Text(AppLocalizations.of(context)!.cancel,
+                style: TextStyle(color: Colors.black),),
             ),
             TextButton(
               onPressed: () async {
@@ -134,8 +135,7 @@ class _AvailableSlotsScreenState extends State<AvailableSlotsScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
-            body: Padding(
+        child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
@@ -247,7 +247,6 @@ class _AvailableSlotsScreenState extends State<AvailableSlotsScreen> {
                   ),
                 ],
               ),
-            ),
             ),
         );
     }

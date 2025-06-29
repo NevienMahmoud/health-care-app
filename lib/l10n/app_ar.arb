@@ -1,5 +1,5 @@
 {
-    "welcome":"مرحبا دكتور",
+    "welcome":"مرحبا دكتور  ",
     "haveANiceDay":"يوم سعيد",
     "search":"البحث بالتاريخ (مثلا 13 أغسطس)",
     "upcomingAppointments":"المواعيد القادمة",
@@ -50,8 +50,10 @@
     "confirmDeleteSlot": "هل أنت متأكد أنك تريد حذف هذا الموعد؟",
     "delete": "حذف",
     "selectTimeToDelete": "اختر الوقت الذي تريد حذفه",
-    "slotDeleted": "✅ تم حذف الموعد بنجاح",
-    "timeSlotDeleted": "✅ تم حذف وقت الموعد بنجاح",
-    "slotsUpdated": "✅ تم تحديث المواعيد بنجاح",
-    "updateFailed": "❌ فشل في التحديث:"
+    "slotDeleted": "تم حذف الموعد بنجاح",
+    "timeSlotDeleted": "تم حذف وقت الموعد بنجاح",
+    "slotsUpdated": "تم تحديث المواعيد بنجاح",
+    "updateFailed": "فشل في التحديث:",
+    "bookSearch":"لا توجد حجوزات في هذا التاريخ",
+    "noAppointmentsFound":"لا توجد حجوزات"
 }

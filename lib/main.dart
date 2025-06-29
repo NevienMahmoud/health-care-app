@@ -31,7 +31,11 @@ void main() async {
           create: (_) => AppointmentCubit(),
         ),
         BlocProvider<AvailableSlotsCubit>(
-          create: (_) => AvailableSlotsCubit()),
+          create: (_) => AvailableSlotsCubit()
+        ),
+        BlocProvider<AppointmentCubit>(
+            create: (_) => AppointmentCubit()
+        ),
       ],
       child: const HealthCare(),
     ),

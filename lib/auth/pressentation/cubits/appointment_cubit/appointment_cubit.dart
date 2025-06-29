@@ -1,56 +1,87 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:health_care_app/auth/data/models/appointment_model.dart';
-import 'appointment_state.dart';
+import 'package:health_care_app/auth/data/models/appointment_with_patient_model.dart';
+import 'package:health_care_app/auth/data/models/patient_profile_model.dart';
+
+part 'appointment_state.dart';
 
 class AppointmentCubit extends Cubit<AppointmentState> {
   AppointmentCubit() : super(AppointmentInitial());
 
-  Future<void> getAppointmentsForDoctor() async {
+  final Dio dio = Dio();
+  List<AppointmentWithPatientModel> appointments = [];
+
+  Future<void> fetchAppointmentsWithPatient() async {
     emit(AppointmentLoading());
 
     try {
       final prefs = await SharedPreferences.getInstance();
       final email = prefs.getString('logged_in_email');
 
-      if (email == null || email.isEmpty) {
-        emit(AppointmentError("Email not found"));
-        return;
-      }
-
-      /// Get all doctors
-      final doctorResponse = await Dio().get('https://healthcare-4scv.vercel.app/api/doctors/doctors');
-      final List doctors = doctorResponse.data['data'];
-
-      /// Find the doctor by email
-      final doctor = doctors.firstWhere(
-            (doc) => doc['email'] == email,
+      // Get doctor by email
+      final doctorRes = await dio.get('https://healthcare-4scv.vercel.app/api/doctors/doctors');
+      final allDoctors = doctorRes.data['data'] as List;
+      final doctor = allDoctors.firstWhere(
+            (d) => d['email'] == email,
         orElse: () => null,
       );
 
-      if (doctor == null) {
-        emit(AppointmentError("Doctor not found"));
-        return;
-      }
-
+      if (doctor == null) throw Exception("Doctor not found");
       final doctorId = doctor['_id'];
 
-      /// Get doctor appointments
-      final response = await Dio().get(
+      // Get appointments for the doctor
+      final appointmentRes = await dio.get(
         'https://healthcare-4scv.vercel.app/api/appointments/doctor/$doctorId',
       );
+      final appointmentList = appointmentRes.data['data'] as List;
 
-      final List data = response.data['data'];
+      // Get all patients
+      final patientsRes = await dio.get(
+        'https://healthcare-4scv.vercel.app/api/patients/patients',
+      );
+      final patientList = patientsRes.data['data'] as List;
 
-      final appointments = data
-          .map((json) => AppointmentModel.fromJson(json))
-          .toList();
+      // Map appointments with patient data
+      appointments = appointmentList.map((apptJson) {
+        final patientId = apptJson['patientId'];
+        final patientData = patientList.firstWhere(
+              (p) => p['_id'] == patientId,
+          orElse: () => null,
+        );
+
+        if (patientData == null) return null;
+
+        final patient = PatientProfileModel.fromJson(patientData);
+
+        return AppointmentWithPatientModel(
+          id: apptJson['_id'],
+          date: apptJson['date'],
+          time: apptJson['time'],
+          status: apptJson['status'],
+          patient: patient,
+        );
+      }).whereType<AppointmentWithPatientModel>().toList();
+
+      // ✅ Sort by full DateTime (date + time)
+      appointments.sort((a, b) {
+        final aDateTime = DateTime.parse('${a.date} ${_normalizeTime(a.time)}');
+        final bDateTime = DateTime.parse('${b.date} ${_normalizeTime(b.time)}');
+        return aDateTime.compareTo(bDateTime);
+      });
 
       emit(AppointmentLoaded(appointments));
     } catch (e) {
       emit(AppointmentError("Failed to load appointments"));
     }
+  }
+
+  // ✅ Normalize time to HH:mm format
+  String _normalizeTime(String time) {
+    final parts = time.split(':');
+    if (parts.length != 2) return '00:00';
+    final hour = parts[0].padLeft(2, '0');
+    final minute = parts[1].padLeft(2, '0');
+    return '$hour:$minute';
   }
 }

@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:health_care_app/auth/pressentation/cubits/auth_cubit/auth_cubit.dart';
 import 'package:health_care_app/core/constants/app_assets/profile_image_widget.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:health_care_app/core/constants/app_colors/app_colors.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:health_care_app/auth/data/models/appointment_with_patient_model.dart';
+import 'package:health_care_app/auth/pressentation/cubits/appointment_cubit/appointment_cubit.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DoctorHomeScreen extends StatefulWidget {
-  static const routeName = 'doctorhome';
-
   const DoctorHomeScreen({super.key});
+  static const routeName = 'doctorhome';
 
   @override
   State<DoctorHomeScreen> createState() => _DoctorHomeScreenState();
@@ -17,39 +18,26 @@ class DoctorHomeScreen extends StatefulWidget {
 
 class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
   final TextEditingController _searchController = TextEditingController();
-
-  List<Map<String, String>> appointments = [
-    {
-      'name': "Mr. Jack Sparrow",
-      'type': "Heart Patient",
-      'time': "5:00pm to 5:20pm",
-      'date': "13 Aug, 2023",
-      'phone': "01012345678",
-    },
-    {
-      'name': "Ms. Emily Watson",
-      'type': "Heart Patient",
-      'time': "3:00pm to 3:30pm",
-      'date': "14 Aug, 2023",
-      'phone': "01512345678",
-    },
-  ];
-
-  List<Map<String, String>> filteredAppointments = [];
+  List<AppointmentWithPatientModel> filteredAppointments = [];
 
   @override
   void initState() {
     super.initState();
-    filteredAppointments = appointments;
+    context.read<AppointmentCubit>().fetchAppointmentsWithPatient();
     _searchController.addListener(_filterAppointments);
   }
 
   void _filterAppointments() {
     final query = _searchController.text.toLowerCase();
+    final cubit = context.read<AppointmentCubit>();
+    final appointments = cubit.state is AppointmentLoaded
+        ? (cubit.state as AppointmentLoaded).appointments
+        : <AppointmentWithPatientModel>[];
+
     setState(() {
-      filteredAppointments = appointments.where((appt) {
-        return appt['date']!.toLowerCase().contains(query);
-      }).toList();
+      filteredAppointments = appointments
+          .where((appt) => appt.date.toLowerCase().contains(query))
+          .toList();
     });
   }
 
@@ -57,26 +45,15 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
     final Uri phoneUri = Uri(scheme: 'tel', path: phone);
     if (await canLaunchUrl(phoneUri)) {
       await launchUrl(phoneUri);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Cannot make the call')),
-      );
     }
   }
 
-  void _openWhatsAppSimple(String phone) async {
-    String formattedPhone = phone;
-    if (!phone.startsWith('20')) {
-      formattedPhone = '20' + phone;
-    }
+  void _openWhatsApp(String phone) async {
+    String formattedPhone = phone.startsWith('20') ? phone : '20$phone';
+    final Uri whatsappUri = Uri.parse("https://wa.me/$formattedPhone");
 
-    final whatsappUrl = Uri.parse("https://wa.me/$formattedPhone");
-    if (await canLaunchUrl(whatsappUrl)) {
-      await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Cannot open WhatsApp')),
-      );
+    if (await canLaunchUrl(whatsappUri)) {
+      await launchUrl(whatsappUri, mode: LaunchMode.externalApplication);
     }
   }
 
@@ -84,13 +61,16 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
   Widget build(BuildContext context) {
     final authState = context.watch<AuthCubit>().state;
     final doctorName = authState is AuthSuccess
-        ? ' ${authState.user?.firstName?? ''} '
-        : 'Doctor Name';
+        ? authState.user?. firstName ?? ''
+        : 'Doctor';
+
     return SafeArea(
         child: Column(
             children: [
-              // Header + Search
+              // Header (Bigger)
               Container(
+                width: double.infinity,
+                 padding: const EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
                   color: AppColors.primaryColor,
                   borderRadius: const BorderRadius.only(
@@ -99,9 +79,11 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                   ),
                 ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 24),
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
                         children: [
                           ProfileImage(
@@ -109,15 +91,9 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                                 ? authState.user?.firstName ?? ''
                                 : '',
                           ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
+                          SizedBox(width: 20,),
                           Text(
-                            '${AppLocalizations.of(context)!.welcome} $doctorName',
+                            '${AppLocalizations.of(context)!.welcome}$doctorName',
                             style: TextStyle(color: Colors.white, fontSize: 20),
                           ),
                         ],
@@ -127,13 +103,16 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                       padding: EdgeInsets.all(8.0),
                       child: Row(
                         children: [
-                          Text(AppLocalizations.of(context)!.haveANiceDay,
-                              style: TextStyle(color: Colors.white, fontSize: 15)),
+                          Text(
+                            '${AppLocalizations.of(context)!.haveANiceDay}$doctorName',
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
                         ],
                       ),
                     ),
+                    SizedBox(height: 10,),
                     Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -143,118 +122,122 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: TextField(
                             controller: _searchController,
-                            decoration:  InputDecoration(
+                            decoration: InputDecoration(
                               hintText: AppLocalizations.of(context)!.search,
                               border: InputBorder.none,
-                              suffixIcon: Icon(Icons.search),
+                              suffixIcon: const Icon(Icons.search),
                             ),
                           ),
                         ),
                       ),
-                    )
+                    ),
+                    const SizedBox(height: 8),
                   ],
                 ),
               ),
 
               // Title
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Row(
                   children: [
                     Text(
                       AppLocalizations.of(context)!.upcomingAppointments,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
               ),
 
-              // Appointments list
+              // Appointments
               Expanded(
-                child: filteredAppointments.isEmpty
-                    ? const Center(
-                  child: Text("No Appointments Found"),
-                )
-                    : ListView.builder(
-                  itemCount: filteredAppointments.length,
-                  itemBuilder: (context, index) {
-                    final appt = filteredAppointments[index];
-                    return Padding(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryColor,
-                          borderRadius: BorderRadius.circular(32),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ListTile(
-                                leading: const CircleAvatar(
-                                  backgroundImage:
-                                  AssetImage('assets/images/apple.png'),
-                                  radius: 30,
-                                ),
-                                title: Text(appt['name']!,
-                                    style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold)),
-                                subtitle: Text(appt['type']!,
-                                    style: const TextStyle(
-                                        color: Colors.white70,
-                                        fontWeight: FontWeight.bold)),
+                child: BlocBuilder<AppointmentCubit, AppointmentState>(
+                  builder: (context, state) {
+                    if (state is AppointmentLoading) {
+                      return const Center(child: CircularProgressIndicator(
+                        color:AppColors.primaryColor,));
+                    } else if (state is AppointmentLoaded) {
+                      final allAppointments = state.appointments;
+                      final isSearching = _searchController.text.isNotEmpty;
+                      final appointments = isSearching
+                          ? filteredAppointments
+                          : allAppointments;
+
+                      if (appointments.isEmpty) {
+                        return Center(
+                          child: Text(
+                            isSearching
+                                ? AppLocalizations.of(context)!.bookSearch
+                                : AppLocalizations.of(context)!.noAppointmentsFound,
+                          ),
+                        );
+                      }
+
+                      return ListView.builder(
+                        itemCount: appointments.length,
+                        itemBuilder: (context, index) {
+                          final appt = appointments[index];
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryColor,
+                                borderRadius: BorderRadius.circular(28),
                               ),
-                              Padding(
-                                padding:
-                                const EdgeInsets.symmetric(horizontal: 24.0),
-                                child: Text(appt['time']!,
-                                    style: const TextStyle(color: Colors.white)),
-                              ),
-                              Row(
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.all(16.0),
-                                    child: Icon(
-                                      Icons.date_range,
-                                      color: Colors.white,
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  child: Text(
+                                    appt.patient.firstName.isNotEmpty
+                                        ? appt.patient.firstName[0]
+                                        : '?',
+                                    style: const TextStyle(
+                                      color: AppColors.primaryColor,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  Text(
-                                    appt['date']!,
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
-                                  const Spacer(),
-                                  IconButton(
-                                    icon: const Icon(Icons.call,
-                                        color: Colors.white),
-                                    onPressed: () {
-                                      _makePhoneCall(appt['phone']!);
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.chat,
-                                        color: Colors.white),
-                                    onPressed: () {
-                                      _openWhatsAppSimple(appt['phone']!);
-                                    },
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
+                                ),
+                                title: Text(
+                                  '${appt.patient.firstName} ${appt.patient.lastName}',
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                subtitle: Text(
+                                  '${appt.date} - ${appt.time}',
+                                  style: const TextStyle(color: Colors.white70),
+                                ),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.call, color: Colors.white),
+                                      onPressed: () => _makePhoneCall(appt.patient.phoneNumber),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.chat, color: Colors.white),
+                                      onPressed: () => _openWhatsApp(appt.patient.phoneNumber),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    } else if (state is AppointmentError) {
+                      return Center(child: Text(state.message));
+                    } else {
+                      return const SizedBox.shrink();
+                    }
                   },
                 ),
               ),
             ],
-            ));
+            ),
+        );
     }
 }

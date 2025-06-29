@@ -111,8 +111,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           log(widget.userType.toString());
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState!.save();
-
-                            // حفظ الإيميل لتخزين الصورة بناءً عليه
                             final prefs = await SharedPreferences.getInstance();
                             await prefs.setString('logged_in_email', email);
 
