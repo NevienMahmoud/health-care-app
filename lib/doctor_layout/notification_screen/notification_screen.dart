@@ -10,9 +10,21 @@ class NotificationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child:
-        Container(color: Colors.white,)
-
-        );
-    }
+    return SafeArea(
+        child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(
+          child: Text(
+            "Notification",
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 25,
+              color: Colors.black,
+            ),
+          ),
+        )
+      ],
+    ));
+  }
 }
