@@ -19,7 +19,6 @@ class AppointmentCubit extends Cubit<AppointmentState> {
       final prefs = await SharedPreferences.getInstance();
       final email = prefs.getString('logged_in_email');
 
-      // Get doctor by email
       final doctorRes = await dio.get('https://healthcare-4scv.vercel.app/api/doctors/doctors');
       final allDoctors = doctorRes.data['data'] as List;
       final doctor = allDoctors.firstWhere(
@@ -30,7 +29,6 @@ class AppointmentCubit extends Cubit<AppointmentState> {
       if (doctor == null) throw Exception("Doctor not found");
       final doctorId = doctor['_id'];
 
-      // Get appointments for the doctor
       final appointmentRes = await dio.get(
         'https://healthcare-4scv.vercel.app/api/appointments/doctor/$doctorId',
       );
@@ -63,7 +61,6 @@ class AppointmentCubit extends Cubit<AppointmentState> {
         );
       }).whereType<AppointmentWithPatientModel>().toList();
 
-      // ✅ Sort by full DateTime (date + time)
       appointments.sort((a, b) {
         final aDateTime = DateTime.parse('${a.date} ${_normalizeTime(a.time)}');
         final bDateTime = DateTime.parse('${b.date} ${_normalizeTime(b.time)}');
@@ -76,7 +73,6 @@ class AppointmentCubit extends Cubit<AppointmentState> {
     }
   }
 
-  // ✅ Normalize time to HH:mm format
   String _normalizeTime(String time) {
     final parts = time.split(':');
     if (parts.length != 2) return '00:00';

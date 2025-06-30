@@ -67,7 +67,6 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
     return SafeArea(
         child: Column(
             children: [
-              // Header (Bigger)
               Container(
                 width: double.infinity,
                  padding: const EdgeInsets.only(bottom: 10),
@@ -104,7 +103,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                       child: Row(
                         children: [
                           Text(
-                            '${AppLocalizations.of(context)!.haveANiceDay}$doctorName',
+                            AppLocalizations.of(context)!.haveANiceDay,
                             style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
                         ],

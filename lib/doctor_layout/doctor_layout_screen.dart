@@ -21,7 +21,7 @@ class _DoctorLayoutScreenState extends State<DoctorLayoutScreen> {
   final List<Widget> screens = [
     DoctorHomeScreen(),
     NotificationScreen(),
-    AvailableSlotsScreen(), // ✅ الشاشة الجديدة في الترتيب
+    AvailableSlotsScreen(),
     SettingScreen(),
   ];
 
@@ -63,7 +63,7 @@ class _DoctorLayoutScreenState extends State<DoctorLayoutScreen> {
                   ),
                 ),
                 BottomNavigationBarItem(
-                  label: AppLocalizations.of(context)!.available, // أو ترجمها من AppLocalizations لما تعملها
+                  label: AppLocalizations.of(context)!.available,
                   icon: Icon(
                     Icons.calendar_today_outlined,
                     color: selectedIndex == 2

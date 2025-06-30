@@ -35,7 +35,7 @@ class AuthCubit extends Cubit<AuthStates> {
         user: user,
       ));
     } catch (e) {
-      log('❌ Login error: $e');
+      log(' Login error: $e');
       emit(AuthError(e.toString()));
     }
   }

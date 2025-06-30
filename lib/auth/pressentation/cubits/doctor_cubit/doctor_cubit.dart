@@ -16,7 +16,7 @@ class DoctorCubit extends Cubit<DoctorState> {
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      final email = prefs.getString('logged_in_email'); // ✅ استخدمي المفتاح الصحيح
+      final email = prefs.getString('logged_in_email');
 
       if (email == null || email.isEmpty) {
         emit(DoctorError('Doctor email not found'));
@@ -39,7 +39,6 @@ class DoctorCubit extends Cubit<DoctorState> {
         return null;
       }
 
-      // ✅ حفظ doctorId في SharedPreferences
       await prefs.setString('doctorId', doctorData['_id']);
 
       doctor = DoctorProfileModel.fromJson(doctorData);
@@ -48,6 +47,31 @@ class DoctorCubit extends Cubit<DoctorState> {
     } catch (e) {
       emit(DoctorError("Failed to fetch doctor data"));
       return null;
+    }
+  }
+
+  Future<void> updateDoctorPrice(int newPrice) async {
+    emit(DoctorLoading());
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final doctorId = prefs.getString('doctorId');
+
+      if (doctorId == null || doctorId.isEmpty) {
+        emit(DoctorError("Doctor ID not found"));
+        return;
+      }
+
+      await Dio().put(
+        'https://healthcare-4scv.vercel.app/api/doctors/doctors/$doctorId',
+        data: {
+          'price': newPrice,
+        },
+      );
+
+      await getDoctorProfile();
+    } catch (e) {
+      emit(DoctorError("Failed to update doctor price"));
     }
   }
 }

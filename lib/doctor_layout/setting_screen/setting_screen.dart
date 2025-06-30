@@ -16,7 +16,6 @@ import 'package:health_care_app/core/constants/app_assets/profile_image_widget.d
 
 class SettingScreen extends StatefulWidget {
   static const routeName = 'doctorsetting';
-
   const SettingScreen({super.key});
 
   @override
@@ -27,6 +26,7 @@ class _SettingScreenState extends State<SettingScreen> {
   bool isLoading = true;
   bool receiveNotifications = true;
   bool vibration = true;
+  int? price;
 
   @override
   void initState() {
@@ -48,7 +48,6 @@ class _SettingScreenState extends State<SettingScreen> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(key, value);
   }
-
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<SettingProvider>(context);
@@ -62,17 +61,20 @@ class _SettingScreenState extends State<SettingScreen> {
 
     return SafeArea(
         child: isLoading
-            ? const Center(child: CircularProgressIndicator()
-        )
+            ? const Center(child: CircularProgressIndicator())
             : BlocBuilder<DoctorCubit, DoctorState>(
             builder: (context, docState) {
               if (docState is DoctorLoading) {
-                return Center(child: CircularProgressIndicator(color: AppColors.primaryColor));
+                return const Center(
+                  child: CircularProgressIndicator(
+                      color: AppColors.primaryColor),
+                );
               } else if (docState is DoctorLoaded) {
                 var specialization = docState.doctor.specialization;
                 var rating = docState.doctor.averageRating.toStringAsFixed(1);
+                price = docState.doctor.price;
 
-                return Padding(
+                return SingleChildScrollView(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,10 +120,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                               Row(
                                 children: [
-                                  const Icon(
-                                    Icons.star_rounded,
-                                    color: Color(0xffFFC700),
-                                  ),
+                                  const Icon(Icons.star_rounded, color: Color(0xffFFC700)),
                                   const SizedBox(width: 10),
                                   Text(
                                     rating,
@@ -137,37 +136,49 @@ class _SettingScreenState extends State<SettingScreen> {
                           ),
                         ],
                       ),
+
                       const SizedBox(height: 20),
                       GestureDetector(
+                        onTap: () => ShowDialog.showEditPriceDialog(context: context,currentPrice: price!),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.attach_money, color: Colors.black),
+                            const SizedBox(width: 10),
+                            Text(
+                              "${loc.examinationPrice}= $price ${loc.egp}",
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 10),
+                      GestureDetector(
                         onTap: () {
-                          Navigator.of(context)
-                              .pushNamed(WalletScreen.routeName);
+                          Navigator.of(context).pushNamed(WalletScreen.routeName);
                         },
                         child: Row(
                           children: [
                             const Icon(Icons.wallet),
                             const SizedBox(width: 10),
-                            Text(
-                              loc.wallet,
-                              style: const TextStyle(
-                                  fontSize: 18, color: Colors.black),
-                            ),
+                            Text(loc.wallet,
+                                style: const TextStyle(fontSize: 18, color: Colors.black)),
                           ],
                         ),
                       ),
                       const SizedBox(height: 10),
                       const Divider(color: Colors.black),
                       const SizedBox(height: 10),
-                      Text(
-                        loc.security,
-                        style: const TextStyle(
-                            fontSize: 18, color: Colors.black),
-                      ),
+                      Text(loc.security,
+                          style: const TextStyle(fontSize: 18, color: Colors.black)),
                       const SizedBox(height: 10),
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(
-                              context, ChangePasswordScreen.routeName);
+                          Navigator.pushNamed(context, ChangePasswordScreen.routeName);
                         },
                         child: Row(
                           children: [
@@ -181,8 +192,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       const SizedBox(height: 20),
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(
-                              context, ForgotPassword.routeName);
+                          Navigator.pushNamed(context, ForgotPassword.routeName);
                         },
                         child: Row(
                           children: [
@@ -196,11 +206,8 @@ class _SettingScreenState extends State<SettingScreen> {
                       const SizedBox(height: 10),
                       const Divider(color: Colors.black),
                       const SizedBox(height: 10),
-                      Text(
-                        loc.general,
-                        style: const TextStyle(
-                            fontSize: 18, color: Colors.black),
-                      ),
+                      Text(loc.general,
+                          style: const TextStyle(fontSize: 18, color: Colors.black)),
                       const SizedBox(height: 20),
                       GestureDetector(
                         onTap: () {
@@ -213,19 +220,16 @@ class _SettingScreenState extends State<SettingScreen> {
                                 receiveNotifications = newReceive;
                                 vibration = newVibration;
                               });
-                              _saveSetting(
-                                  'receive_notifications', newReceive);
+                              _saveSetting('receive_notifications', newReceive);
                               _saveSetting('vibration', newVibration);
                             },
                           );
                         },
                         child: Row(
                           children: [
-                            const Icon(Icons.notifications,
-                                color: Colors.black),
+                            const Icon(Icons.notifications, color: Colors.black),
                             const SizedBox(width: 10),
-                            Text(loc.notification,
-                                style: const TextStyle(color: Colors.black)),
+                            Text(loc.notification, style: const TextStyle(color: Colors.black)),
                             const Spacer(),
                           ],
                         ),
@@ -237,14 +241,14 @@ class _SettingScreenState extends State<SettingScreen> {
                           children: [
                             const Icon(Icons.language, color: Colors.black),
                             const SizedBox(width: 10),
-                            Text(loc.language,
-                                style: const TextStyle(color: Colors.black)),
+                            Text(loc.language, style: const TextStyle(color: Colors.black)),
                             const Spacer(),
                             Text(
                               lang == 'en' ? 'English' : 'العربية',
                               style: const TextStyle(
-                                  color: AppColors.primaryColor,
-                                  fontWeight: FontWeight.bold),
+                                color: AppColors.primaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
@@ -252,8 +256,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       const SizedBox(height: 20),
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(
-                              context, SupportScreen.routeName);
+                          Navigator.pushNamed(context, SupportScreen.routeName);
                         },
                         child: Row(
                           children: [
@@ -283,10 +286,10 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                 );
               } else {
-                return SizedBox.shrink();
+                return const SizedBox.shrink();
               }
             },
-        ),
+            ),
         );
     }
 }

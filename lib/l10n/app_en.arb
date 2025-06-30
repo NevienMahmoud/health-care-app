@@ -56,5 +56,11 @@
     "slotsUpdated": "Slots updated successfully",
     "updateFailed": "Failed to update:",
     "bookSearch":"No bookings on this date",
-    "noAppointmentsFound":"No Appointments Found"
+    "noAppointmentsFound":"No Appointments Found",
+    "price":"Price",
+    "editPrice": "Edit Price",
+    "enterNewPrice": "Enter new price",
+    "egp": "EGP",
+    "examinationPrice": "Examination Price",
+    "mainBalance":"Main balance"
 }

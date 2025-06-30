@@ -1,21 +1,32 @@
-import 'package:flutter/material.dart'; import 'package:flutter_gen/gen_l10n/app_localizations.dart'; import 'package:health_care_app/core/constants/app_colors/app_colors.dart'; import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:health_care_app/core/constants/app_colors/app_colors.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class SupportScreen extends StatelessWidget { static const routeName = 'supportScreen';
+class SupportScreen extends StatelessWidget {
+  static const routeName = 'supportScreen';
 
-const SupportScreen({super.key});
+  const SupportScreen({super.key});
 
-void _openWhatsAppChat() async { final Uri whatsappUrl = Uri.parse('https://wa.me/201234567890'); if (await canLaunchUrl(whatsappUrl)) { await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication); } }
+  void _openWhatsAppChat() async {
+    final Uri whatsappUrl = Uri.parse('https://wa.me/201234567890');
+    if (await canLaunchUrl(whatsappUrl)) {
+      await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
+    }
+  }
 
-@override Widget build(BuildContext context) { final loc = AppLocalizations.of(context)!;
+  @override
+  Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
 
-return Scaffold(
-  appBar: AppBar(
-    title: Text(loc.helpSupport),
-    backgroundColor: AppColors.primaryColor,
-  ),
-  body: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: ListView(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(loc.helpSupport),
+        backgroundColor: AppColors.primaryColor,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
           children: [
             const Icon(Icons.support_agent,
                 size: 100, color: AppColors.primaryColor),
@@ -78,9 +89,8 @@ return Scaffold(
               ],
             ),
           ],
-          ),
+        ),
       ),
-);
-
-}
+    );
+  }
 }

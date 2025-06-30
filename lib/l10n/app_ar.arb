@@ -55,5 +55,11 @@
     "slotsUpdated": "تم تحديث المواعيد بنجاح",
     "updateFailed": "فشل في التحديث:",
     "bookSearch":"لا توجد حجوزات في هذا التاريخ",
-    "noAppointmentsFound":"لا توجد حجوزات"
+    "noAppointmentsFound":"لا توجد حجوزات",
+    "price":"سعر الكشف",
+    "editPrice": "تعديل السعر",
+    "enterNewPrice": "أدخل السعر الجديد",
+    "egp": "ج.م",
+    "examinationPrice": "سعر الكشف",
+    "mainBalance":"الرصيد الأساسي"
 }

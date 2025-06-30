@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:health_care_app/auth/pressentation/cubits/auth_cubit/auth_cubit.dart';
 import 'package:health_care_app/auth/pressentation/cubits/doctor_cubit/doctor_cubit.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:health_care_app/core/constants/app_colors/app_colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:health_care_app/providers/setting_provider.dart';
@@ -142,5 +140,44 @@ class ShowDialog {
           );
         },
     );
+  }
+  static Future<void> showEditPriceDialog({
+    required BuildContext context,
+    required int currentPrice,
+  }) async {
+    final controller = TextEditingController(text: currentPrice.toString());
+
+    await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+            title: Text(AppLocalizations.of(context)!.editPrice),
+            content: TextField(
+              controller: controller,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.enterNewPrice,
+                border: OutlineInputBorder(),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(AppLocalizations.of(context)!.cancel,
+                style: TextStyle(color: Colors.black),),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  final newPrice = int.tryParse(controller.text);
+                  if (newPrice != null) {
+                    context.read<DoctorCubit>().updateDoctorPrice(newPrice);
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: Text(AppLocalizations.of(context)!.save,
+                style: TextStyle(color: AppColors.primaryColor),),
+              ),
+            ],
+            ),
+        );
   }
 }

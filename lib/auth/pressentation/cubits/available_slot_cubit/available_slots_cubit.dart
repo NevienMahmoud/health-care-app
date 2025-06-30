@@ -37,7 +37,6 @@ class AvailableSlotsCubit extends Cubit<AvailableSlotsState> {
 
       slots = data.map((e) => AvailableSlotModel.fromJson(e)).toList();
 
-      // ترتيب الأيام والأوقات
       slots.sort((a, b) => a.date.compareTo(b.date));
       for (var slot in slots) {
         slot.times.sort((a, b) => _parseTime(a).compareTo(_parseTime(b)));
@@ -104,7 +103,7 @@ class AvailableSlotsCubit extends Cubit<AvailableSlotsState> {
   Future<void> deleteSlot(int index) async {
     slots.removeAt(index);
     emit(AvailableSlotsLoaded(List.from(slots)));
-    await updateAvailableSlots(); // ✅ تحديث الـ API بعد الحذف
+    await updateAvailableSlots();
   }
 
   Future<void> deleteSlotTime(BuildContext context, int index, [String? timeToDelete]) async {
@@ -116,7 +115,7 @@ class AvailableSlotsCubit extends Cubit<AvailableSlotsState> {
         slots.removeAt(index);
       }
       emit(AvailableSlotsLoaded(List.from(slots)));
-      await updateAvailableSlots(); // ✅ تحديث الـ API بعد الحذف
+      await updateAvailableSlots();
       return;
     }
 
@@ -126,7 +125,7 @@ class AvailableSlotsCubit extends Cubit<AvailableSlotsState> {
     if (times.length == 1) {
       slots.removeAt(index);
       emit(AvailableSlotsLoaded(List.from(slots)));
-      await updateAvailableSlots(); // ✅ تحديث الـ API بعد الحذف
+      await updateAvailableSlots();
     } else {
       String? selectedTime;
 
